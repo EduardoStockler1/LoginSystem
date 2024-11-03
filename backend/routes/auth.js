@@ -4,9 +4,9 @@ const bcrypt = require('bcryptjs');
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, email, password } = req.body;
   try {
-    const user = await User.create(username, password);
+    const user = await User.create(username, email, password);
     res.status(201).json(user);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -14,9 +14,9 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, email, password } = req.body;
   try {
-    const user = await User.findByUsername(username);
+    const user = await User.findByUsernameOrEmail(username, email);
     if (!user || !(await bcrypt.compare(password, user.password))) {
       res.status(401).json({ error: 'Invalid credentials' });
     } else {

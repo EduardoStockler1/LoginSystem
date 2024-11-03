@@ -1,6 +1,7 @@
 document.getElementById('register-form').addEventListener('submit', async (event) => {
     event.preventDefault();
     const username = document.getElementById('register-username').value;
+    const email = document.getElementById('register-email').value;
     const password = document.getElementById('register-password').value;
 
     try {
@@ -9,7 +10,7 @@ document.getElementById('register-form').addEventListener('submit', async (event
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ username, email, password }),
         });
 
         const result = await response.json();
@@ -26,6 +27,7 @@ document.getElementById('register-form').addEventListener('submit', async (event
 document.getElementById('login-form').addEventListener('submit', async (event) => {
     event.preventDefault();
     const username = document.getElementById('login-username').value;
+    const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
 
     try {
@@ -34,7 +36,7 @@ document.getElementById('login-form').addEventListener('submit', async (event) =
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ username, email, password }),
         });
 
         const result = await response.json();
