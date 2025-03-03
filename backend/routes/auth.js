@@ -1,30 +1,24 @@
 const express = require('express');
-const User = require('../models/users');
-const bcrypt = require('bcryptjs');
 const router = express.Router();
 
-router.post('/register', async (req, res) => {
-  const { username, email, password } = req.body;
-  try {
-    const user = await User.create(username, email, password);
-    res.status(201).json(user);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+let users = [];
 
-router.post('/login', async (req, res) => {
-  const { username, email, password } = req.body;
-  try {
-    const user = await User.findByUsernameOrEmail(username, email);
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      res.status(401).json({ error: 'Invalid credentials' });
-    } else {
-      res.status(200).json({ message: 'Login successful' });
+router.post('/frontend/src/pages/register', (req, res) => {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+        return res.status(400).json({ success: false, message: 'All fields are required' });
     }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+
+    const existingUser = users.find(user => user.email === email);
+    if (existingUser) {
+        return res.status(400).json({ success: false, message: 'Email already exists' });
+    }
+
+    const newUser = { name, email, password };
+    users.push(newUser);
+
+    res.status(201).json({ success: true, message: 'User registered successfully' });
 });
 
 module.exports = router;

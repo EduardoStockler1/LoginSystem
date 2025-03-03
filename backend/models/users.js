@@ -1,39 +1,20 @@
-const db = require('../config/db');
-const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
 
-class User {
-  static async create(username, email, password) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    return new Promise((resolve, reject) => {
-      db.run(
-        `INSERT INTO users (username, email, password) VALUES (?, ?, ?)`,
-        [username, email, hashedPassword],
-        function (err) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve({ id: this.lastID, username });
-          }
-        }
-      );
-    });
-  }
+const userSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+});
 
-  static async findByUsernameOrEmail(username, email) {
-    return new Promise((resolve, reject) => {
-      db.get(
-        `SELECT * FROM users WHERE username = ? OR email = ?`,
-        [username, email],
-        (err, row) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(row);
-          }
-        }
-      );
-    });
-  }
-}
-
+const User = mongoose.model('User', userSchema);
 module.exports = User;
